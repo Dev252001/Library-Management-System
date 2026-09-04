@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>{% block title %}Library Management System{% endblock %}</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}" />
+</head>
+<body>
+
+  <!-- ─── Navigation ──────────────────────────────────────────────────── -->
+  <nav class="navbar">
+    <a class="nav-brand" href="{{ url_for('dashboard.index') }}">📚 LibraryMS</a>
+    <div class="nav-links">
+      <a href="{{ url_for('dashboard.index') }}"
+         class="{{ 'active' if request.endpoint == 'dashboard.index' }}">
+        Dashboard
+      </a>
+      <a href="{{ url_for('books.list_books') }}"
+         class="{{ 'active' if request.blueprint == 'books' }}">
+        Books
+      </a>
+      <a href="{{ url_for('students.list_students') }}"
+         class="{{ 'active' if request.blueprint == 'students' }}">
+        Students
+      </a>
+      <a href="{{ url_for('transactions.issue') }}"
+         class="{{ 'active' if request.blueprint == 'transactions' }}">
+        Issue / Return
+      </a>
+      <a href="{{ url_for('analytics.analytics') }}"
+         class="{{ 'active' if request.blueprint == 'analytics' }}">
+        Analytics
+      </a>
+    </div>
+  </nav>
+
+  <!-- ─── Flash messages ───────────────────────────────────────────────── -->
+  <!--
+    Flask's flash() system stores one-time messages in the session.
+    get_flashed_messages(with_categories=True) returns (category, message)
+    pairs.  We map category → CSS class so errors appear red, success green.
+  -->
+  <div class="flash-container">
+    {% with messages = get_flashed_messages(with_categories=True) %}
+      {% for category, message in messages %}
+        <div class="flash flash-{{ category }}">{{ message }}</div>
+      {% endfor %}
+    {% endwith %}
+  </div>
+
+  <!-- ─── Page content ─────────────────────────────────────────────────── -->
+  <main class="container">
+    {% block content %}{% endblock %}
+  </main>
+
+  <footer class="footer">
+    Self-Study Library Management System &mdash; Local Admin Tool
+  </footer>
+
+</body>
+</html>

@@ -1,0 +1,101 @@
+{% extends "base.html" %}
+{% block title %}Issue / Return — LibraryMS{% endblock %}
+
+{% block content %}
+<h1 class="page-title">Issue / Return Book</h1>
+
+<!-- ─── Tab switcher ───────────────────────────────────────────────────── -->
+<!--
+  Two tabs on one page so the librarian doesn't navigate away between
+  issuing and returning.  The active_tab variable is set by the route
+  (either "issue" or "return") so the correct tab is pre-selected.
+-->
+<div class="tabs">
+  <a href="{{ url_for('transactions.issue') }}"
+     class="tab {{ 'tab-active' if active_tab == 'issue' }}">
+    Issue a Book
+  </a>
+  <a href="{{ url_for('transactions.return_book_view') }}"
+     class="tab {{ 'tab-active' if active_tab == 'return' }}">
+    Return a Book
+  </a>
+</div>
+
+<!-- ─── Issue form ─────────────────────────────────────────────────────── -->
+{% if active_tab == "issue" %}
+<div class="form-card">
+  <p class="form-hint">
+    Select a student and a book.  The due date will be set automatically to
+    <strong>14 days from today</strong>.
+  </p>
+
+  <form method="POST" action="{{ url_for('transactions.issue') }}">
+
+    <div class="form-group">
+      <label for="student_id">Student <span class="required">*</span></label>
+      <select id="student_id" name="student_id" required class="input-select">
+        <option value="">— Select student —</option>
+        {% for s in students %}
+          <option value="{{ s.id }}">
+            #{{ s.id }} — {{ s.name }} ({{ s.fee_tier }})
+          </option>
+        {% endfor %}
+      </select>
+    </div>
+
+    <div class="form-group">
+      <label for="book_id">Book <span class="required">*</span></label>
+      <select id="book_id" name="book_id" required class="input-select">
+        <option value="">— Select book —</option>
+        {% for b in books %}
+          <option value="{{ b.id }}"
+            {{ 'disabled' if b.available_copies == 0 }}
+            style="{{ 'color: #999;' if b.available_copies == 0 }}">
+            #{{ b.id }} — {{ b.title }}
+            ({{ b.available_copies }} available)
+          </option>
+        {% endfor %}
+      </select>
+      <!--
+        Unavailable books are shown but disabled.  This is better UX than
+        hiding them entirely: the librarian can see why a book isn't
+        selectable rather than thinking it doesn't exist.
+      -->
+    </div>
+
+    <div class="form-actions">
+      <button type="submit" class="btn btn-primary">Issue Book</button>
+    </div>
+
+  </form>
+</div>
+
+<!-- ─── Return form ────────────────────────────────────────────────────── -->
+{% else %}
+<div class="form-card">
+  <p class="form-hint">
+    Enter the <strong>Transaction ID</strong> printed on the issue slip or
+    found on the student's profile page.  Any overdue fine will be calculated
+    and displayed automatically.
+  </p>
+
+  <form method="POST" action="{{ url_for('transactions.return_book_view') }}">
+
+    <div class="form-group">
+      <label for="transaction_id">
+        Transaction ID <span class="required">*</span>
+      </label>
+      <input type="number" id="transaction_id" name="transaction_id"
+             min="1" required class="input-text input-narrow"
+             placeholder="e.g. 42" />
+    </div>
+
+    <div class="form-actions">
+      <button type="submit" class="btn btn-primary">Process Return</button>
+    </div>
+
+  </form>
+</div>
+{% endif %}
+
+{% endblock %}

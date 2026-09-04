@@ -1,0 +1,42 @@
+{% extends "base.html" %}
+{% block title %}Register Student — LibraryMS{% endblock %}
+
+{% block content %}
+<h1 class="page-title">Register New Student</h1>
+
+<form method="POST" action="{{ url_for('students.add_student_view') }}" class="form-card">
+
+  <div class="form-group">
+    <label for="name">Full Name <span class="required">*</span></label>
+    <input type="text" id="name" name="name" required class="input-text"
+           placeholder="e.g. Priya Sharma" />
+  </div>
+
+  <div class="form-group">
+    <label for="contact">Contact (phone / email) <span class="optional">(optional)</span></label>
+    <input type="text" id="contact" name="contact" class="input-text"
+           placeholder="e.g. 9876543210" />
+  </div>
+
+  <div class="form-group">
+    <label for="joining_date">Joining Date</label>
+    <input type="date" id="joining_date" name="joining_date"
+           value="{{ today }}" class="input-text input-narrow" />
+    <!-- Pre-filled with today's date; the librarian can adjust for backdating. -->
+  </div>
+
+  <div class="form-group">
+    <label for="fee_tier">Fee Tier <span class="required">*</span></label>
+    <select id="fee_tier" name="fee_tier" class="input-select">
+      <option value="subsidized" selected>Subsidized (reduced rate)</option>
+      <option value="standard">Standard (full rate)</option>
+    </select>
+  </div>
+
+  <div class="form-actions">
+    <button type="submit" class="btn btn-primary">Register Student</button>
+    <a href="{{ url_for('students.list_students') }}" class="btn btn-ghost">Cancel</a>
+  </div>
+
+</form>
+{% endblock %}

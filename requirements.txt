@@ -1,0 +1,22 @@
+# requirements.txt
+# -----------------
+# Pinned to minor versions (e.g. Flask==3.0.*) so that:
+#   - Patch releases (bug fixes) install automatically.
+#   - Breaking major/minor changes do NOT install silently.
+# Install with:  pip install -r requirements.txt
+
+# ── Web framework ─────────────────────────────────────────────────────────
+Flask==3.1.*
+
+# ── Chart generation ──────────────────────────────────────────────────────
+# matplotlib is used to produce PNG charts embedded as base64 data URIs.
+# The Agg backend (non-interactive) is selected in routes/analytics.py so
+# matplotlib never tries to open a display window — safe on headless servers.
+matplotlib==3.11.*
+
+# ── Standard-library modules used (no install needed, listed for clarity) ──
+# sqlite3   — built into Python 3.x
+# datetime  — built into Python 3.x
+# io        — built into Python 3.x
+# base64    — built into Python 3.x
+# os        — built into Python 3.x

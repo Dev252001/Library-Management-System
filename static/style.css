@@ -1,0 +1,291 @@
+/* static/style.css
+   Minimal, functional styling.
+   No framework dependency — every rule is here and readable.
+*/
+
+/* ── Reset & base ─────────────────────────────────────────────────────── */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  font-size: 15px;
+  line-height: 1.6;
+  background: #f4f6f9;
+  color: #1a1a2e;
+}
+
+a { color: #3b6fd4; text-decoration: none; }
+a:hover { text-decoration: underline; }
+
+/* ── Layout ───────────────────────────────────────────────────────────── */
+.container {
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 2rem 1.5rem;
+}
+
+/* ── Navbar ───────────────────────────────────────────────────────────── */
+.navbar {
+  background: #1a1a2e;
+  display: flex;
+  align-items: center;
+  padding: 0 1.5rem;
+  height: 56px;
+  gap: 2rem;
+}
+
+.nav-brand {
+  color: #fff;
+  font-size: 1.1rem;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+}
+
+.nav-links { display: flex; gap: 0.25rem; }
+
+.nav-links a {
+  color: #c0c8d8;
+  padding: 0.35rem 0.75rem;
+  border-radius: 4px;
+  font-size: 0.9rem;
+  transition: background 0.15s;
+}
+
+.nav-links a:hover,
+.nav-links a.active {
+  background: rgba(255,255,255,0.12);
+  color: #fff;
+  text-decoration: none;
+}
+
+/* ── Flash messages ───────────────────────────────────────────────────── */
+.flash-container { max-width: 1100px; margin: 0.75rem auto; padding: 0 1.5rem; }
+
+.flash {
+  padding: 0.65rem 1rem;
+  border-radius: 6px;
+  margin-bottom: 0.5rem;
+  font-size: 0.9rem;
+}
+
+.flash-success { background: #d4edda; color: #155724; border: 1px solid #c3e6cb; }
+.flash-error   { background: #f8d7da; color: #721c24; border: 1px solid #f5c6cb; }
+.flash-warning { background: #fff3cd; color: #856404; border: 1px solid #ffeeba; }
+
+/* ── Typography helpers ───────────────────────────────────────────────── */
+.page-title    { font-size: 1.6rem; font-weight: 700; margin-bottom: 0.25rem; }
+.page-subtitle { color: #666; margin-bottom: 1.5rem; font-size: 0.9rem; }
+.section-title { font-size: 1.1rem; font-weight: 600; margin: 1.5rem 0 0.75rem; }
+.back-link     { display: inline-block; color: #666; font-size: 0.85rem; margin-bottom: 0.75rem; }
+.text-red      { color: #c0392b; font-weight: 600; }
+
+/* ── KPI card grid ────────────────────────────────────────────────────── */
+.card-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 1rem;
+  margin-bottom: 2rem;
+}
+
+.card {
+  background: #fff;
+  border-radius: 10px;
+  padding: 1.25rem 1.5rem;
+  border-left: 5px solid #ccc;
+}
+
+.card-label { font-size: 0.8rem; color: #666; text-transform: uppercase; letter-spacing: 0.05em; }
+.card-value { font-size: 2rem; font-weight: 700; margin-top: 0.25rem; }
+
+.card-blue  { border-color: #3b6fd4; color: #3b6fd4; }
+.card-green { border-color: #27ae60; color: #27ae60; }
+.card-amber { border-color: #e67e22; color: #e67e22; }
+.card-red   { border-color: #c0392b; color: #c0392b; }
+
+/* ── Quick actions ────────────────────────────────────────────────────── */
+.quick-actions { display: flex; align-items: center; gap: 0.75rem; flex-wrap: wrap; }
+.quick-actions h2 { font-size: 1rem; color: #555; margin-right: 0.5rem; }
+
+/* ── Buttons ──────────────────────────────────────────────────────────── */
+.btn {
+  display: inline-block;
+  padding: 0.45rem 1rem;
+  border-radius: 5px;
+  font-size: 0.9rem;
+  cursor: pointer;
+  border: none;
+  font-family: inherit;
+  transition: opacity 0.15s;
+}
+.btn:hover { opacity: 0.85; text-decoration: none; }
+.btn-primary   { background: #3b6fd4; color: #fff; }
+.btn-secondary { background: #e2e8f0; color: #333; }
+.btn-ghost     { background: transparent; color: #555; border: 1px solid #ccc; }
+.btn-sm        { padding: 0.3rem 0.7rem; font-size: 0.82rem; }
+
+/* ── Forms ────────────────────────────────────────────────────────────── */
+.form-card {
+  background: #fff;
+  border-radius: 10px;
+  padding: 2rem;
+  max-width: 560px;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.07);
+}
+
+.form-group { margin-bottom: 1.1rem; }
+.form-group label {
+  display: block;
+  font-size: 0.88rem;
+  font-weight: 600;
+  margin-bottom: 0.35rem;
+  color: #333;
+}
+
+.input-text, .input-select {
+  width: 100%;
+  padding: 0.5rem 0.75rem;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  font-size: 0.95rem;
+  font-family: inherit;
+  background: #fff;
+  transition: border-color 0.15s;
+}
+.input-text:focus, .input-select:focus {
+  outline: none;
+  border-color: #3b6fd4;
+}
+.input-narrow { width: 160px; }
+
+.form-actions { display: flex; gap: 0.75rem; margin-top: 1.5rem; }
+.form-hint    { font-size: 0.88rem; color: #666; margin-bottom: 1rem; }
+
+.required { color: #c0392b; }
+.optional  { color: #999; font-weight: 400; font-size: 0.82rem; }
+
+/* ── Search form ──────────────────────────────────────────────────────── */
+.search-form {
+  display: flex;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+  align-items: center;
+  margin-bottom: 1.25rem;
+}
+.search-form .input-text  { max-width: 300px; }
+.search-form .input-select { max-width: 200px; }
+
+/* ── Table ────────────────────────────────────────────────────────────── */
+.table-header-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 0.6rem;
+  font-size: 0.88rem;
+  color: #666;
+}
+
+.data-table {
+  width: 100%;
+  border-collapse: collapse;
+  background: #fff;
+  border-radius: 8px;
+  overflow: hidden;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.07);
+}
+
+.data-table th {
+  background: #f0f2f5;
+  text-align: left;
+  padding: 0.6rem 0.85rem;
+  font-size: 0.82rem;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: #555;
+  border-bottom: 1px solid #e0e0e0;
+}
+
+.data-table td {
+  padding: 0.6rem 0.85rem;
+  border-bottom: 1px solid #f0f0f0;
+  font-size: 0.9rem;
+}
+
+.data-table tbody tr:last-child td { border-bottom: none; }
+.data-table tbody tr:hover { background: #f8faff; }
+
+/* Row state coloring */
+.row-unavailable { color: #999; }
+.row-overdue     { background: #fff5f5 !important; }
+.row-issued      { background: #fffdf0 !important; }
+
+/* ── Badges ───────────────────────────────────────────────────────────── */
+.badge {
+  display: inline-block;
+  padding: 0.15rem 0.55rem;
+  border-radius: 12px;
+  font-size: 0.75rem;
+  font-weight: 600;
+}
+.badge-green { background: #d4edda; color: #155724; }
+.badge-red   { background: #f8d7da; color: #721c24; }
+.badge-amber { background: #fff3cd; color: #856404; }
+.badge-blue  { background: #d0e4ff; color: #1a4a99; }
+
+/* ── Tabs ─────────────────────────────────────────────────────────────── */
+.tabs {
+  display: flex;
+  gap: 0;
+  margin-bottom: 1.5rem;
+  border-bottom: 2px solid #e0e0e0;
+}
+
+.tab {
+  padding: 0.6rem 1.25rem;
+  font-size: 0.95rem;
+  color: #666;
+  border-bottom: 3px solid transparent;
+  margin-bottom: -2px;
+  transition: color 0.15s;
+}
+
+.tab:hover { color: #333; text-decoration: none; }
+.tab-active { color: #3b6fd4; border-bottom-color: #3b6fd4; font-weight: 600; }
+
+/* ── Info card (student profile) ──────────────────────────────────────── */
+.info-card {
+  background: #fff;
+  border-radius: 10px;
+  padding: 1.25rem 1.5rem;
+  max-width: 500px;
+  margin-bottom: 1.5rem;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.07);
+}
+
+.info-row {
+  display: flex;
+  justify-content: space-between;
+  padding: 0.4rem 0;
+  border-bottom: 1px solid #f0f0f0;
+  font-size: 0.9rem;
+}
+.info-row:last-child { border-bottom: none; }
+.info-label { color: #777; }
+.info-value { font-weight: 500; }
+
+/* ── Analytics ────────────────────────────────────────────────────────── */
+.chart-section { margin-bottom: 2.5rem; }
+.chart-img     { max-width: 100%; border-radius: 8px; border: 1px solid #e0e0e0; }
+
+/* ── Misc ─────────────────────────────────────────────────────────────── */
+.empty-state  { color: #888; padding: 2rem 0; font-size: 0.95rem; }
+.link-action  { color: #3b6fd4; font-size: 0.88rem; }
+
+/* ── Footer ───────────────────────────────────────────────────────────── */
+.footer {
+  text-align: center;
+  padding: 1.5rem;
+  color: #aaa;
+  font-size: 0.8rem;
+  border-top: 1px solid #e0e0e0;
+  margin-top: 2rem;
+}

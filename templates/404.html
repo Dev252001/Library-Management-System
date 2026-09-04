@@ -1,0 +1,14 @@
+{% extends "base.html" %}
+{% block title %}Page Not Found — LibraryMS{% endblock %}
+
+{% block content %}
+<div style="text-align:center; padding: 4rem 1rem;">
+  <h1 style="font-size:4rem; color:#ccc;">404</h1>
+  <p style="font-size:1.1rem; color:#555; margin-bottom:1.5rem;">
+    The page or record you're looking for doesn't exist.
+  </p>
+  <a href="{{ url_for('dashboard.index') }}" class="btn btn-primary">
+    ← Back to Dashboard
+  </a>
+</div>
+{% endblock %}

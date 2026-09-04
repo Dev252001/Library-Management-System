@@ -1,0 +1,69 @@
+{% extends "base.html" %}
+{% block title %}Analytics — LibraryMS{% endblock %}
+
+{% block content %}
+<h1 class="page-title">Analytics</h1>
+<p class="page-subtitle">Charts are generated fresh from the database on every load.</p>
+
+<!-- ─── Top 5 most-borrowed books ──────────────────────────────────────── -->
+<div class="chart-section">
+  <h2 class="section-title">Top 5 Most-Borrowed Books</h2>
+
+  {% if top_books_chart %}
+    <!--
+      The chart is a base64-encoded PNG produced by Matplotlib and embedded
+      directly as a data URI.  No static file is written to disk, so the
+      chart is always current and never stale from a previous run.
+    -->
+    <img
+      src="data:image/png;base64,{{ top_books_chart }}"
+      alt="Top 5 most-borrowed books bar chart"
+      class="chart-img"
+    />
+  {% else %}
+    <p class="empty-state">
+      No borrow data yet.  Issue some books to see this chart.
+    </p>
+  {% endif %}
+</div>
+
+<!-- ─── Monthly borrow volume ──────────────────────────────────────────── -->
+<div class="chart-section">
+  <h2 class="section-title">Monthly Borrow Volume</h2>
+
+  {% if monthly_vol_chart %}
+    <img
+      src="data:image/png;base64,{{ monthly_vol_chart }}"
+      alt="Monthly borrow volume line chart"
+      class="chart-img"
+    />
+  {% else %}
+    <p class="empty-state">
+      No borrow data yet.  Issue some books to see this chart.
+    </p>
+  {% endif %}
+</div>
+
+<!-- ─── Raw data table (for accessibility / printing) ──────────────────── -->
+{% if top_books %}
+<div class="chart-section">
+  <h2 class="section-title">Raw Data — Top Books</h2>
+  <table class="data-table">
+    <thead>
+      <tr><th>Rank</th><th>Title</th><th>Author</th><th>Times Borrowed</th></tr>
+    </thead>
+    <tbody>
+      {% for i, b in top_books | enumerate %}
+      <tr>
+        <td>{{ i + 1 }}</td>
+        <td>{{ b.title }}</td>
+        <td>{{ b.author }}</td>
+        <td>{{ b.borrow_count }}</td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+{% endif %}
+
+{% endblock %}
