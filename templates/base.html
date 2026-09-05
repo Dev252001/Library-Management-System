@@ -20,13 +20,13 @@
   <div class="lms-wrapper">
 
     <!-- Sidebar -->
-    <aside class="lms-sidebar d-flex flex-column">
+    <aside class="lms-sidebar">
       <div class="sidebar-brand">
         <i class="bi bi-book-half"></i>
         <span>LibraryMS</span>
       </div>
 
-      <nav class="sidebar-nav flex-grow-1">
+      <nav class="sidebar-nav">
         <a href="{{ url_for('dashboard.index') }}"
            class="sidebar-link {{ 'active' if request.endpoint == 'dashboard.index' }}">
           <i class="bi bi-speedometer2"></i> Dashboard
