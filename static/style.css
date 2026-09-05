@@ -49,8 +49,8 @@ body {
 .sidebar-nav {
   padding: 1rem 0.75rem;
   display: flex;
-  flex-column: column;
-  gap: 2px;
+  flex-direction: column;
+  gap: 4px;
 }
 
 .sidebar-link {
