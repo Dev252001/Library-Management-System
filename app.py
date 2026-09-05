@@ -1,3 +1,5 @@
+import os
+
 from flask import Flask, render_template
 
 from models.database import init_db
@@ -13,7 +15,10 @@ def create_app():
     app = Flask(__name__)
 
     # needed for flash messages to work (session signing)
-    app.secret_key = "library-ms-local-secret-2024"
+    # Load from the environment so the key is never committed to VCS.
+    app.secret_key = os.environ.get("FLASK_SECRET_KEY", "")
+    if not app.secret_key:
+        raise RuntimeError("FLASK_SECRET_KEY environment variable must be set")
 
     app.register_blueprint(dashboard_bp)
     app.register_blueprint(books_bp)
@@ -40,4 +45,4 @@ if __name__ == "__main__":
     print("  Ctrl+C to stop")
     print("=" * 50)
 
-    app.run(debug=True, port=5000)
+    app.run(debug=os.environ.get("FLASK_DEBUG", "False").lower() == "true", port=5000)
