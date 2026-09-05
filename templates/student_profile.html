@@ -1,90 +1,119 @@
 {% extends "base.html" %}
 {% block title %}{{ student.name }} — LibraryMS{% endblock %}
+{% block topbar_title %}Student Profile{% endblock %}
 
 {% block content %}
-<a href="{{ url_for('students.list_students') }}" class="back-link">← All Students</a>
+<div class="pt-3">
 
-<h1 class="page-title">{{ student.name }}</h1>
+  <a href="{{ url_for('students.list_students') }}"
+     class="btn btn-sm btn-outline-secondary mb-3 d-inline-flex align-items-center gap-1">
+    <i class="bi bi-arrow-left"></i> All Students
+  </a>
 
-<!-- ─── Student info card ──────────────────────────────────────────────── -->
-<div class="info-card">
-  <div class="info-row">
-    <span class="info-label">Student ID</span>
-    <span class="info-value">#{{ student.id }}</span>
-  </div>
-  <div class="info-row">
-    <span class="info-label">Contact</span>
-    <span class="info-value">{{ student.contact or '—' }}</span>
-  </div>
-  <div class="info-row">
-    <span class="info-label">Joining Date</span>
-    <span class="info-value">{{ student.joining_date }}</span>
-  </div>
-  <div class="info-row">
-    <span class="info-label">Fee Tier</span>
-    <span class="info-value">
-      <span class="badge {{ 'badge-blue' if student.fee_tier == 'subsidized' else 'badge-amber' }}">
-        {{ student.fee_tier }}
-      </span>
-    </span>
-  </div>
-  <div class="info-row">
-    <span class="info-label">Outstanding Fines</span>
-    <span class="info-value {{ 'text-red' if outstanding_fines > 0 }}">
-      ₹{{ "%.2f"|format(outstanding_fines) }}
-      {% if outstanding_fines > 0 %}
-        <span class="badge badge-red">Collect</span>
-      {% endif %}
-    </span>
+  <div class="row g-4">
+
+    <!-- Left: student card -->
+    <div class="col-12 col-md-4">
+      <div class="card border-0 shadow-sm text-center p-4">
+        <div class="student-avatar-lg mx-auto mb-3">
+          {{ student.name[0].upper() }}
+        </div>
+        <h5 class="fw-bold mb-0">{{ student.name }}</h5>
+        <p class="text-muted small mb-3">Member #{{ student.id }}</p>
+
+        {% if student.fee_tier == 'subsidized' %}
+          <span class="badge rounded-pill bg-primary-subtle text-primary border border-primary-subtle mb-3">
+            Subsidized
+          </span>
+        {% else %}
+          <span class="badge rounded-pill bg-warning-subtle text-warning-emphasis border border-warning-subtle mb-3">
+            Standard
+          </span>
+        {% endif %}
+
+        <hr class="my-2" />
+        <div class="text-start small">
+          <div class="d-flex justify-content-between py-1 border-bottom">
+            <span class="text-muted">Contact</span>
+            <span class="fw-medium">{{ student.contact or '—' }}</span>
+          </div>
+          <div class="d-flex justify-content-between py-1 border-bottom">
+            <span class="text-muted">Joined</span>
+            <span class="fw-medium">{{ student.joining_date }}</span>
+          </div>
+          <div class="d-flex justify-content-between py-1">
+            <span class="text-muted">Outstanding Fine</span>
+            <span class="fw-bold {{ 'text-danger' if outstanding_fines > 0 else 'text-success' }}">
+              ₹{{ "%.2f"|format(outstanding_fines) }}
+            </span>
+          </div>
+        </div>
+
+        {% if outstanding_fines > 0 %}
+        <div class="alert alert-danger d-flex align-items-center gap-2 mt-3 py-2 px-3 text-start small mb-0">
+          <i class="bi bi-exclamation-triangle-fill"></i>
+          Fine pending — please collect.
+        </div>
+        {% endif %}
+      </div>
+    </div>
+
+    <!-- Right: borrow history -->
+    <div class="col-12 col-md-8">
+      <div class="card border-0 shadow-sm">
+        <div class="card-header bg-white border-bottom fw-semibold py-3">
+          <i class="bi bi-clock-history text-secondary me-2"></i>Borrow History
+        </div>
+
+        {% if transactions %}
+        <div class="table-responsive">
+          <table class="table table-hover align-middle mb-0">
+            <thead class="table-light">
+              <tr>
+                <th class="ps-3">Txn #</th>
+                <th>Book</th>
+                <th>Issued</th>
+                <th>Due</th>
+                <th>Returned</th>
+                <th class="text-center">Status</th>
+                <th class="text-end pe-3">Fine (₹)</th>
+              </tr>
+            </thead>
+            <tbody>
+              {% for t in transactions %}
+              <tr class="{{ 'table-danger' if t.status == 'overdue' else ('table-warning' if t.status == 'issued' else '') }}">
+                <td class="ps-3 text-muted small">{{ t.id }}</td>
+                <td class="fw-semibold small">{{ t.book_title }}</td>
+                <td class="small text-muted">{{ t.issue_date }}</td>
+                <td class="small text-muted">{{ t.due_date }}</td>
+                <td class="small text-muted">{{ t.return_date or '—' }}</td>
+                <td class="text-center">
+                  {% if t.status == 'overdue' %}
+                    <span class="badge bg-danger">Overdue</span>
+                  {% elif t.status == 'issued' %}
+                    <span class="badge bg-warning text-dark">Issued</span>
+                  {% else %}
+                    <span class="badge bg-success">Returned</span>
+                  {% endif %}
+                </td>
+                <td class="text-end pe-3 fw-semibold {{ 'text-danger' if t.fine_amount > 0 else 'text-muted' }}">
+                  {{ "%.2f"|format(t.fine_amount) }}
+                </td>
+              </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+        </div>
+        {% else %}
+        <div class="text-center py-5 text-muted">
+          <i class="bi bi-journal-x display-4 d-block mb-2"></i>
+          No borrow history yet.
+        </div>
+        {% endif %}
+
+      </div>
+    </div>
+
   </div>
 </div>
-
-<!-- ─── Borrow history ─────────────────────────────────────────────────── -->
-<h2 class="section-title">Borrow History</h2>
-
-{% if transactions %}
-<table class="data-table">
-  <thead>
-    <tr>
-      <th>Txn #</th>
-      <th>Book</th>
-      <th>Issued</th>
-      <th>Due</th>
-      <th>Returned</th>
-      <th>Status</th>
-      <th>Fine (₹)</th>
-    </tr>
-  </thead>
-  <tbody>
-    {% for t in transactions %}
-    <tr class="
-      {% if t.status == 'overdue'  %}row-overdue
-      {% elif t.status == 'issued' %}row-issued
-      {% endif %}
-    ">
-      <td>{{ t.id }}</td>
-      <td>{{ t.book_title }}</td>
-      <td>{{ t.issue_date }}</td>
-      <td>{{ t.due_date }}</td>
-      <td>{{ t.return_date or '—' }}</td>
-      <td>
-        {% if t.status == 'overdue' %}
-          <span class="badge badge-red">Overdue</span>
-        {% elif t.status == 'issued' %}
-          <span class="badge badge-amber">Issued</span>
-        {% else %}
-          <span class="badge badge-green">Returned</span>
-        {% endif %}
-      </td>
-      <td class="{{ 'text-red' if t.fine_amount > 0 }}">
-        {{ "%.2f"|format(t.fine_amount) }}
-      </td>
-    </tr>
-    {% endfor %}
-  </tbody>
-</table>
-{% else %}
-  <p class="empty-state">This student has no borrow history yet.</p>
-{% endif %}
-
 {% endblock %}

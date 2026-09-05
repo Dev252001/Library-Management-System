@@ -1,101 +1,106 @@
 {% extends "base.html" %}
 {% block title %}Issue / Return — LibraryMS{% endblock %}
+{% block topbar_title %}Issue / Return{% endblock %}
 
 {% block content %}
-<h1 class="page-title">Issue / Return Book</h1>
+<div class="pt-3">
+  <div class="row justify-content-center">
+    <div class="col-12 col-lg-7">
 
-<!-- ─── Tab switcher ───────────────────────────────────────────────────── -->
-<!--
-  Two tabs on one page so the librarian doesn't navigate away between
-  issuing and returning.  The active_tab variable is set by the route
-  (either "issue" or "return") so the correct tab is pre-selected.
--->
-<div class="tabs">
-  <a href="{{ url_for('transactions.issue') }}"
-     class="tab {{ 'tab-active' if active_tab == 'issue' }}">
-    Issue a Book
-  </a>
-  <a href="{{ url_for('transactions.return_book_view') }}"
-     class="tab {{ 'tab-active' if active_tab == 'return' }}">
-    Return a Book
-  </a>
+      <!-- Tab pills -->
+      <ul class="nav nav-pills mb-4 p-1 bg-light rounded-3 d-inline-flex gap-1" role="tablist">
+        <li class="nav-item">
+          <a href="{{ url_for('transactions.issue') }}"
+             class="nav-link px-4 {{ 'active' if active_tab == 'issue' }}">
+            <i class="bi bi-arrow-up-right-circle me-1"></i>Issue
+          </a>
+        </li>
+        <li class="nav-item">
+          <a href="{{ url_for('transactions.return_book_view') }}"
+             class="nav-link px-4 {{ 'active' if active_tab == 'return' }}">
+            <i class="bi bi-arrow-down-left-circle me-1"></i>Return
+          </a>
+        </li>
+      </ul>
+
+      <div class="card border-0 shadow-sm">
+
+        {% if active_tab == "issue" %}
+        <!-- Issue form -->
+        <div class="card-header bg-white border-bottom fw-semibold py-3">
+          <i class="bi bi-arrow-up-right-circle-fill text-primary me-2"></i>Issue a Book
+        </div>
+        <div class="card-body p-4">
+          <p class="text-muted small mb-4">
+            <i class="bi bi-info-circle me-1"></i>
+            Due date is set automatically to <strong>14 days</strong> from today.
+          </p>
+          <form method="POST" action="{{ url_for('transactions.issue') }}">
+            <div class="mb-3">
+              <label for="student_id" class="form-label fw-semibold">
+                Student <span class="text-danger">*</span>
+              </label>
+              <select id="student_id" name="student_id" required class="form-select">
+                <option value="">— Select student —</option>
+                {% for s in students %}
+                  <option value="{{ s.id }}">
+                    #{{ s.id }} — {{ s.name }} ({{ s.fee_tier }})
+                  </option>
+                {% endfor %}
+              </select>
+            </div>
+
+            <div class="mb-4">
+              <label for="book_id" class="form-label fw-semibold">
+                Book <span class="text-danger">*</span>
+              </label>
+              <select id="book_id" name="book_id" required class="form-select">
+                <option value="">— Select book —</option>
+                {% for b in books %}
+                  <option value="{{ b.id }}"
+                    {{ 'disabled' if b.available_copies == 0 }}>
+                    {% if b.available_copies == 0 %}⛔{% endif %}
+                    #{{ b.id }} — {{ b.title }} ({{ b.available_copies }} available)
+                  </option>
+                {% endfor %}
+              </select>
+            </div>
+
+            <button type="submit" class="btn btn-primary px-4">
+              <i class="bi bi-check-lg me-1"></i>Issue Book
+            </button>
+          </form>
+        </div>
+
+        {% else %}
+        <!-- Return form -->
+        <div class="card-header bg-white border-bottom fw-semibold py-3">
+          <i class="bi bi-arrow-down-left-circle-fill text-success me-2"></i>Return a Book
+        </div>
+        <div class="card-body p-4">
+          <p class="text-muted small mb-4">
+            <i class="bi bi-info-circle me-1"></i>
+            Enter the <strong>Transaction ID</strong> from the student's profile page.
+            Any fine is calculated and shown automatically.
+          </p>
+          <form method="POST" action="{{ url_for('transactions.return_book_view') }}">
+            <div class="mb-4" style="max-width:280px">
+              <label for="transaction_id" class="form-label fw-semibold">
+                Transaction ID <span class="text-danger">*</span>
+              </label>
+              <input type="number" id="transaction_id" name="transaction_id"
+                     min="1" required class="form-control"
+                     placeholder="e.g. 42" />
+            </div>
+            <button type="submit" class="btn btn-success px-4">
+              <i class="bi bi-check-circle me-1"></i>Process Return
+            </button>
+          </form>
+        </div>
+        {% endif %}
+
+      </div>
+    </div>
+  </div>
 </div>
-
-<!-- ─── Issue form ─────────────────────────────────────────────────────── -->
-{% if active_tab == "issue" %}
-<div class="form-card">
-  <p class="form-hint">
-    Select a student and a book.  The due date will be set automatically to
-    <strong>14 days from today</strong>.
-  </p>
-
-  <form method="POST" action="{{ url_for('transactions.issue') }}">
-
-    <div class="form-group">
-      <label for="student_id">Student <span class="required">*</span></label>
-      <select id="student_id" name="student_id" required class="input-select">
-        <option value="">— Select student —</option>
-        {% for s in students %}
-          <option value="{{ s.id }}">
-            #{{ s.id }} — {{ s.name }} ({{ s.fee_tier }})
-          </option>
-        {% endfor %}
-      </select>
-    </div>
-
-    <div class="form-group">
-      <label for="book_id">Book <span class="required">*</span></label>
-      <select id="book_id" name="book_id" required class="input-select">
-        <option value="">— Select book —</option>
-        {% for b in books %}
-          <option value="{{ b.id }}"
-            {{ 'disabled' if b.available_copies == 0 }}
-            style="{{ 'color: #999;' if b.available_copies == 0 }}">
-            #{{ b.id }} — {{ b.title }}
-            ({{ b.available_copies }} available)
-          </option>
-        {% endfor %}
-      </select>
-      <!--
-        Unavailable books are shown but disabled.  This is better UX than
-        hiding them entirely: the librarian can see why a book isn't
-        selectable rather than thinking it doesn't exist.
-      -->
-    </div>
-
-    <div class="form-actions">
-      <button type="submit" class="btn btn-primary">Issue Book</button>
-    </div>
-
-  </form>
-</div>
-
-<!-- ─── Return form ────────────────────────────────────────────────────── -->
-{% else %}
-<div class="form-card">
-  <p class="form-hint">
-    Enter the <strong>Transaction ID</strong> printed on the issue slip or
-    found on the student's profile page.  Any overdue fine will be calculated
-    and displayed automatically.
-  </p>
-
-  <form method="POST" action="{{ url_for('transactions.return_book_view') }}">
-
-    <div class="form-group">
-      <label for="transaction_id">
-        Transaction ID <span class="required">*</span>
-      </label>
-      <input type="number" id="transaction_id" name="transaction_id"
-             min="1" required class="input-text input-narrow"
-             placeholder="e.g. 42" />
-    </div>
-
-    <div class="form-actions">
-      <button type="submit" class="btn btn-primary">Process Return</button>
-    </div>
-
-  </form>
-</div>
-{% endif %}
-
 {% endblock %}

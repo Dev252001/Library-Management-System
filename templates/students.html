@@ -1,50 +1,76 @@
 {% extends "base.html" %}
 {% block title %}Students — LibraryMS{% endblock %}
+{% block topbar_title %}Students{% endblock %}
 
 {% block content %}
-<h1 class="page-title">Student Members</h1>
+<div class="pt-3">
 
-<div class="table-header-row">
-  <span>{{ students|length }} registered student(s)</span>
-  <a href="{{ url_for('students.add_student_view') }}" class="btn btn-primary btn-sm">+ Register Student</a>
+  <div class="d-flex justify-content-between align-items-center mb-3">
+    <span class="text-muted small">{{ students|length }} registered member(s)</span>
+    <a href="{{ url_for('students.add_student_view') }}"
+       class="btn btn-sm btn-primary d-flex align-items-center gap-1">
+      <i class="bi bi-person-plus-fill"></i> Register Student
+    </a>
+  </div>
+
+  {% if students %}
+  <div class="card border-0 shadow-sm">
+    <div class="table-responsive">
+      <table class="table table-hover align-middle mb-0">
+        <thead class="table-light">
+          <tr>
+            <th class="ps-3">#</th>
+            <th>Name</th>
+            <th>Contact</th>
+            <th>Joined</th>
+            <th>Tier</th>
+            <th class="pe-3"></th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for s in students %}
+          <tr>
+            <td class="ps-3 text-muted small">{{ s.id }}</td>
+            <td>
+              <div class="d-flex align-items-center gap-2">
+                <div class="student-avatar">
+                  {{ s.name[0].upper() }}
+                </div>
+                <span class="fw-semibold">{{ s.name }}</span>
+              </div>
+            </td>
+            <td class="text-muted">{{ s.contact or '—' }}</td>
+            <td class="text-muted small">{{ s.joining_date }}</td>
+            <td>
+              {% if s.fee_tier == 'subsidized' %}
+                <span class="badge rounded-pill bg-primary-subtle text-primary border border-primary-subtle">
+                  Subsidized
+                </span>
+              {% else %}
+                <span class="badge rounded-pill bg-warning-subtle text-warning-emphasis border border-warning-subtle">
+                  Standard
+                </span>
+              {% endif %}
+            </td>
+            <td class="pe-3 text-end">
+              <a href="{{ url_for('students.profile', student_id=s.id) }}"
+                 class="btn btn-sm btn-outline-primary">
+                View Profile <i class="bi bi-arrow-right ms-1"></i>
+              </a>
+            </td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+  {% else %}
+  <div class="text-center py-5 text-muted">
+    <i class="bi bi-people display-4 d-block mb-2"></i>
+    No students registered yet.
+    <a href="{{ url_for('students.add_student_view') }}" class="ms-1">Register the first one?</a>
+  </div>
+  {% endif %}
+
 </div>
-
-{% if students %}
-<table class="data-table">
-  <thead>
-    <tr>
-      <th>ID</th>
-      <th>Name</th>
-      <th>Contact</th>
-      <th>Joining Date</th>
-      <th>Fee Tier</th>
-      <th>Profile</th>
-    </tr>
-  </thead>
-  <tbody>
-    {% for s in students %}
-    <tr>
-      <td>{{ s.id }}</td>
-      <td>{{ s.name }}</td>
-      <td>{{ s.contact or '—' }}</td>
-      <td>{{ s.joining_date }}</td>
-      <td>
-        <span class="badge {{ 'badge-blue' if s.fee_tier == 'subsidized' else 'badge-amber' }}">
-          {{ s.fee_tier }}
-        </span>
-      </td>
-      <td>
-        <a href="{{ url_for('students.profile', student_id=s.id) }}"
-           class="link-action">View →</a>
-      </td>
-    </tr>
-    {% endfor %}
-  </tbody>
-</table>
-{% else %}
-  <p class="empty-state">No students registered yet.
-    <a href="{{ url_for('students.add_student_view') }}">Register the first one?</a>
-  </p>
-{% endif %}
-
 {% endblock %}

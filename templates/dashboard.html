@@ -1,54 +1,93 @@
 {% extends "base.html" %}
 {% block title %}Dashboard — LibraryMS{% endblock %}
+{% block topbar_title %}Dashboard{% endblock %}
 
 {% block content %}
-<h1 class="page-title">Dashboard</h1>
-<p class="page-subtitle">Live snapshot — overdue status refreshed on every load.</p>
+<div class="pt-3">
 
-<!-- ─── KPI Cards ──────────────────────────────────────────────────────── -->
-<!--
-  Each card shows one aggregated number from get_dashboard_stats().
-  The color coding lets the librarian spot problems at a glance:
-    blue  → neutral information
-    green → positive (copies available)
-    amber → active issues (books currently out)
-    red   → overdue / fines — needs attention
--->
-<div class="card-grid">
+  <!-- KPI cards -->
+  <div class="row g-3 mb-4">
 
-  <div class="card card-blue">
-    <div class="card-label">Total Book Copies</div>
-    <div class="card-value">{{ stats.total_books }}</div>
+    <div class="col-6 col-md-4 col-xl">
+      <div class="kpi-card kpi-blue">
+        <div class="kpi-icon"><i class="bi bi-collection-fill"></i></div>
+        <div class="kpi-body">
+          <div class="kpi-value">{{ stats.total_books }}</div>
+          <div class="kpi-label">Total Copies</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-6 col-md-4 col-xl">
+      <div class="kpi-card kpi-green">
+        <div class="kpi-icon"><i class="bi bi-bookmark-check-fill"></i></div>
+        <div class="kpi-body">
+          <div class="kpi-value">{{ stats.available_books }}</div>
+          <div class="kpi-label">Available</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-6 col-md-4 col-xl">
+      <div class="kpi-card kpi-amber">
+        <div class="kpi-icon"><i class="bi bi-arrow-up-right-circle-fill"></i></div>
+        <div class="kpi-body">
+          <div class="kpi-value">{{ stats.issued_count }}</div>
+          <div class="kpi-label">Issued</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-6 col-md-4 col-xl">
+      <div class="kpi-card kpi-red">
+        <div class="kpi-icon"><i class="bi bi-clock-history"></i></div>
+        <div class="kpi-body">
+          <div class="kpi-value">{{ stats.overdue_count }}</div>
+          <div class="kpi-label">Overdue</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-6 col-md-4 col-xl">
+      <div class="kpi-card kpi-purple">
+        <div class="kpi-icon"><i class="bi bi-cash-coin"></i></div>
+        <div class="kpi-body">
+          <div class="kpi-value">₹{{ "%.0f"|format(stats.total_fines) }}</div>
+          <div class="kpi-label">Fines Due</div>
+        </div>
+      </div>
+    </div>
+
   </div>
 
-  <div class="card card-green">
-    <div class="card-label">Available on Shelf</div>
-    <div class="card-value">{{ stats.available_books }}</div>
+  <!-- Quick actions -->
+  <div class="card border-0 shadow-sm">
+    <div class="card-header bg-white fw-semibold border-bottom">
+      <i class="bi bi-lightning-charge-fill text-warning me-1"></i> Quick Actions
+    </div>
+    <div class="card-body d-flex flex-wrap gap-2">
+      <a href="{{ url_for('transactions.issue') }}"
+         class="btn btn-primary d-flex align-items-center gap-2">
+        <i class="bi bi-arrow-up-right-circle"></i> Issue a Book
+      </a>
+      <a href="{{ url_for('transactions.return_book_view') }}"
+         class="btn btn-outline-secondary d-flex align-items-center gap-2">
+        <i class="bi bi-arrow-down-left-circle"></i> Return a Book
+      </a>
+      <a href="{{ url_for('books.add_book_view') }}"
+         class="btn btn-outline-secondary d-flex align-items-center gap-2">
+        <i class="bi bi-plus-circle"></i> Add Book
+      </a>
+      <a href="{{ url_for('students.add_student_view') }}"
+         class="btn btn-outline-secondary d-flex align-items-center gap-2">
+        <i class="bi bi-person-plus"></i> Register Student
+      </a>
+      <a href="{{ url_for('analytics.analytics') }}"
+         class="btn btn-outline-secondary d-flex align-items-center gap-2">
+        <i class="bi bi-bar-chart-line"></i> View Analytics
+      </a>
+    </div>
   </div>
 
-  <div class="card card-amber">
-    <div class="card-label">Currently Issued</div>
-    <div class="card-value">{{ stats.issued_count }}</div>
-  </div>
-
-  <div class="card card-red">
-    <div class="card-label">Overdue</div>
-    <div class="card-value">{{ stats.overdue_count }}</div>
-  </div>
-
-  <div class="card card-red">
-    <div class="card-label">Outstanding Fines</div>
-    <div class="card-value">₹{{ "%.2f"|format(stats.total_fines) }}</div>
-  </div>
-
-</div>
-
-<!-- ─── Quick-action buttons ───────────────────────────────────────────── -->
-<div class="quick-actions">
-  <h2>Quick Actions</h2>
-  <a href="{{ url_for('transactions.issue') }}"   class="btn btn-primary">Issue a Book</a>
-  <a href="{{ url_for('transactions.return_book_view') }}" class="btn btn-secondary">Return a Book</a>
-  <a href="{{ url_for('books.add_book_view') }}"  class="btn btn-secondary">Add New Book</a>
-  <a href="{{ url_for('students.add_student_view') }}" class="btn btn-secondary">Register Student</a>
 </div>
 {% endblock %}

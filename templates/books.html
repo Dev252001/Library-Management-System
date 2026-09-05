@@ -1,77 +1,109 @@
 {% extends "base.html" %}
-{% block title %}Book Catalogue — LibraryMS{% endblock %}
+{% block title %}Books — LibraryMS{% endblock %}
+{% block topbar_title %}Book Catalogue{% endblock %}
 
 {% block content %}
-<h1 class="page-title">Book Catalogue</h1>
+<div class="pt-3">
 
-<!-- ─── Search & filter form ───────────────────────────────────────────── -->
-<!--
-  Uses GET so that the resulting URL (e.g. /books/?q=science&category=Physics)
-  is bookmarkable.  The form re-populates from current_query / current_category
-  so the librarian sees what they searched after results load.
--->
-<form method="GET" action="{{ url_for('books.list_books') }}" class="search-form">
-  <input
-    type="text"
-    name="q"
-    placeholder="Search by title or author…"
-    value="{{ current_query }}"
-    class="input-text"
-  />
-  <select name="category" class="input-select">
-    <option value="">All Categories</option>
-    {% for cat in categories %}
-      <option value="{{ cat }}"
-        {{ 'selected' if cat == current_category }}>
-        {{ cat }}
-      </option>
-    {% endfor %}
-  </select>
-  <button type="submit" class="btn btn-primary">Search</button>
-  <a href="{{ url_for('books.list_books') }}" class="btn btn-ghost">Clear</a>
-</form>
+  <!-- Search bar -->
+  <div class="card border-0 shadow-sm mb-4">
+    <div class="card-body">
+      <form method="GET" action="{{ url_for('books.list_books') }}"
+            class="row g-2 align-items-end">
+        <div class="col-12 col-md-5">
+          <label class="form-label small fw-semibold mb-1">Search</label>
+          <div class="input-group">
+            <span class="input-group-text bg-white border-end-0">
+              <i class="bi bi-search text-muted"></i>
+            </span>
+            <input type="text" name="q" value="{{ current_query }}"
+                   placeholder="Title or author…"
+                   class="form-control border-start-0 ps-0" />
+          </div>
+        </div>
+        <div class="col-12 col-md-4">
+          <label class="form-label small fw-semibold mb-1">Category</label>
+          <select name="category" class="form-select">
+            <option value="">All Categories</option>
+            {% for cat in categories %}
+              <option value="{{ cat }}" {{ 'selected' if cat == current_category }}>
+                {{ cat }}
+              </option>
+            {% endfor %}
+          </select>
+        </div>
+        <div class="col-auto d-flex gap-2">
+          <button type="submit" class="btn btn-primary">
+            <i class="bi bi-funnel-fill me-1"></i>Filter
+          </button>
+          <a href="{{ url_for('books.list_books') }}" class="btn btn-outline-secondary">
+            <i class="bi bi-x-lg"></i>
+          </a>
+        </div>
+      </form>
+    </div>
+  </div>
 
-<div class="table-header-row">
-  <span>{{ books|length }} book(s) found</span>
-  <a href="{{ url_for('books.add_book_view') }}" class="btn btn-primary btn-sm">+ Add Book</a>
+  <!-- Table header -->
+  <div class="d-flex justify-content-between align-items-center mb-2">
+    <span class="text-muted small">{{ books|length }} book(s) found</span>
+    <a href="{{ url_for('books.add_book_view') }}"
+       class="btn btn-sm btn-primary d-flex align-items-center gap-1">
+      <i class="bi bi-plus-lg"></i> Add Book
+    </a>
+  </div>
+
+  <!-- Table -->
+  {% if books %}
+  <div class="card border-0 shadow-sm">
+    <div class="table-responsive">
+      <table class="table table-hover align-middle mb-0">
+        <thead class="table-light">
+          <tr>
+            <th class="ps-3">#</th>
+            <th>Title</th>
+            <th>Author</th>
+            <th>ISBN</th>
+            <th>Category</th>
+            <th class="text-center">Total</th>
+            <th class="text-center pe-3">Available</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for book in books %}
+          <tr class="{{ 'text-muted' if book.available_copies == 0 }}">
+            <td class="ps-3 text-muted small">{{ book.id }}</td>
+            <td class="fw-semibold">{{ book.title }}</td>
+            <td>{{ book.author }}</td>
+            <td class="text-muted small">{{ book.isbn or '—' }}</td>
+            <td>
+              {% if book.category %}
+                <span class="badge rounded-pill bg-light text-dark border">
+                  {{ book.category }}
+                </span>
+              {% else %}—{% endif %}
+            </td>
+            <td class="text-center">{{ book.total_copies }}</td>
+            <td class="text-center pe-3">
+              {% if book.available_copies == 0 %}
+                <span class="badge bg-danger">Unavailable</span>
+              {% else %}
+                <span class="badge bg-success">{{ book.available_copies }}</span>
+              {% endif %}
+            </td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+  {% else %}
+  <div class="text-center py-5 text-muted">
+    <i class="bi bi-journal-x display-4 d-block mb-2"></i>
+    No books match your search.
+    <a href="{{ url_for('books.add_book_view') }}" class="ms-1">Add one?</a>
+  </div>
+  {% endif %}
+
 </div>
-
-<!-- ─── Results table ──────────────────────────────────────────────────── -->
-{% if books %}
-<table class="data-table">
-  <thead>
-    <tr>
-      <th>ID</th>
-      <th>Title</th>
-      <th>Author</th>
-      <th>ISBN</th>
-      <th>Category</th>
-      <th>Total</th>
-      <th>Available</th>
-    </tr>
-  </thead>
-  <tbody>
-    {% for book in books %}
-    <tr class="{{ 'row-unavailable' if book.available_copies == 0 }}">
-      <td>{{ book.id }}</td>
-      <td>{{ book.title }}</td>
-      <td>{{ book.author }}</td>
-      <td>{{ book.isbn or '—' }}</td>
-      <td>{{ book.category or '—' }}</td>
-      <td>{{ book.total_copies }}</td>
-      <td>
-        {% if book.available_copies == 0 %}
-          <span class="badge badge-red">0 — Unavailable</span>
-        {% else %}
-          <span class="badge badge-green">{{ book.available_copies }}</span>
-        {% endif %}
-      </td>
-    </tr>
-    {% endfor %}
-  </tbody>
-</table>
-{% else %}
-  <p class="empty-state">No books match your search. <a href="{{ url_for('books.add_book_view') }}">Add one?</a></p>
-{% endif %}
-
 {% endblock %}
